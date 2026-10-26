@@ -69,7 +69,7 @@ The recipe was confirmed on a Redmi M2101K6P (Snapdragon 732G / Adreno 618, Andr
 
 
 ## Credits
-Co-authored-by: Claude -<noreply@anthropic.com>
+- Built with help from [Claude](https://claude.ai) (Anthropic)
 
 - [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container): patched Mesa with the KGSL backend
 - [Termux](https://github.com/termux/termux-app), [Termux:X11](https://github.com/termux/termux-x11) and [proot-distro](https://github.com/termux/proot-distro)
