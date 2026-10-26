@@ -65,12 +65,11 @@ If no build exists for your Ubuntu release, the install finishes without GPU acc
 
 ## Status
 
-The recipe was confirmed on a Redmi M2101K6P (Snapdragon 732G / Adreno 618, Android 12) with Ubuntu 26.04 and KDE Plasma 6.6. Reports for other devices are welcome as issues.
+Tested on a Redmi M2101K6P (Adreno 618, Android 12) with a clean Termux install: Ubuntu 26.04, KDE Plasma 6.6. In GPU mode OpenGL renders through Zink on Turnip (Adreno 618). With the nogpu option it falls back to llvmpipe (CPU). Other devices may differ, and reports are welcome as issues.
 
 
 ## Credits
 - Built with help from [Claude](https://claude.ai) (Anthropic)
-
 - [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container): patched Mesa with the KGSL backend
 - [Termux](https://github.com/termux/termux-app), [Termux:X11](https://github.com/termux/termux-x11) and [proot-distro](https://github.com/termux/proot-distro)
 - [Mesa](https://www.mesa3d.org/) (Turnip, Zink)
