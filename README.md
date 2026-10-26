@@ -67,7 +67,9 @@ If no build exists for your Ubuntu release, the install finishes without GPU acc
 
 The recipe was confirmed on a Redmi M2101K6P (Snapdragon 732G / Adreno 618, Android 12) with Ubuntu 26.04 and KDE Plasma 6.6. Reports for other devices are welcome as issues.
 
+
 ## Credits
+Co-authored-by: Claude -<noreply@anthropic.com>
 
 - [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container): patched Mesa with the KGSL backend
 - [Termux](https://github.com/termux/termux-app), [Termux:X11](https://github.com/termux/termux-x11) and [proot-distro](https://github.com/termux/proot-distro)
