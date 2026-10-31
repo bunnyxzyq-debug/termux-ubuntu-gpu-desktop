@@ -58,7 +58,7 @@ say "Installing X server, audio and GPU drivers..."
 pkg install -y termux-x11-nightly pulseaudio dbus mesa mesa-vulkan-icd-freedreno mesa-demos vulkan-tools
 
 say "Installing KDE Plasma (long step)..."
-for p in plasma-desktop kwin-x11 konsole dolphin systemsettings kscreen breeze; do
+for p in plasma-desktop kwin-x11 konsole dolphin systemsettings kscreen breeze firefox ; do
   pkg install -y "$p" || warn "could not install $p (skipped)"
 done
 
