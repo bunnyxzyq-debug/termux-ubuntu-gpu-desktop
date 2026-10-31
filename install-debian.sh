@@ -124,6 +124,7 @@ apt-get install -y --no-install-recommends sudo dbus-x11 locales wget curl ca-ce
   xdg-utils pulseaudio-utils mesa-utils vulkan-tools x11-xserver-utils xorg fonts-noto
 echo "[guest] installing desktops: $PKGS"
 apt-get install -y $PKGS
+apt-get install -y firefox-esr || echo "[guest] WARNING: could not install firefox-esr"
 if dpkg -s kwin-x11 >/dev/null 2>&1 && apt-cache show plasma-session-x11 >/dev/null 2>&1; then
   apt-get install -y plasma-session-x11
 fi
