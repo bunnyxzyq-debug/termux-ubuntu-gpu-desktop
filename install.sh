@@ -1,11 +1,11 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ------------------------------------------------------------------
-#  Distro chooser: Ubuntu or Debian + desktop + Adreno GPU acceleration.
+#  Chooser: Ubuntu or Debian (container) or native Termux KDE Plasma.
 #  Downloads install-<distro>.sh from this repo and runs it.
 #
 #  Usage:
 #    bash install.sh                                     menu
-#    DISTRO=debian bash install.sh                       skip the distro menu
+#    DISTRO=debian bash install.sh                       skip the menu (ubuntu | debian | native)
 #    DISTRO=ubuntu DESKTOPS=kde YES=1 bash install.sh    fully non-interactive
 #  Other variables (DESKTOPS, YES, MESA_TAG) are passed through.
 # ------------------------------------------------------------------
@@ -28,21 +28,21 @@ ask() {
 [ -d /data/data/com.termux ] || die "Run this inside Termux."
 command -v curl >/dev/null 2>&1 || die "curl is missing. Run: apt update && apt full-upgrade -y"
 
-IDS=("ubuntu" "debian")
-NAMES=("Ubuntu 26.04" "Debian 13 (trixie)")
+IDS=("ubuntu" "debian" "native")
+NAMES=("Ubuntu 26.04 (container)" "Debian 13 (container)" "Native Termux: KDE Plasma, no container")
 
 CHOICE=""
 if [ -n "${DISTRO:-}" ]; then
   for i in "${!IDS[@]}"; do
     if [ "${IDS[$i]}" = "$DISTRO" ]; then CHOICE="$DISTRO"; fi
   done
-  [ -n "$CHOICE" ] || die "Unknown DISTRO: $DISTRO (use ubuntu or debian)"
+  [ -n "$CHOICE" ] || die "Unknown DISTRO: $DISTRO (use ubuntu, debian or native)"
 else
   echo
-  echo "Which distro do you want?"
+  echo "Which setup do you want?"
   for i in "${!NAMES[@]}"; do echo "  $((i+1))) ${NAMES[$i]}"; done
   N="$(ask "Number [default: 1]: " "1")"
-  if [[ "$N" =~ ^[1-2]$ ]]; then CHOICE="${IDS[$((N-1))]}"; else die "Invalid choice."; fi
+  if [[ "$N" =~ ^[1-3]$ ]]; then CHOICE="${IDS[$((N-1))]}"; else die "Invalid choice."; fi
 fi
 
 TARGET="$HOME/install-$CHOICE.sh"
