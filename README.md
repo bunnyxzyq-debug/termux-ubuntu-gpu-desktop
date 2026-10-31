@@ -1,8 +1,11 @@
 # Ubuntu / Debian + GPU-accelerated desktop on Android (no root)
 
-One installer that sets up **Ubuntu 26.04** or **Debian 13** in Termux with a desktop of your choice (KDE Plasma, XFCE, LXQt, MATE) and real Adreno GPU acceleration through KGSL, shown on screen with Termux:X11.
+One installer with three ways to get a Linux desktop on Android with real Adreno GPU acceleration, shown with Termux:X11:
 
-The GPU path is: patched Mesa (Turnip with a KGSL backend) → Zink (OpenGL on Vulkan) → Termux:X11.
+- **Ubuntu 26.04** or **Debian 13** in a container (PRoot), with KDE Plasma, XFCE, LXQt or MATE.
+- **Native Termux:** KDE Plasma 6.7 running directly in Termux, with no container.
+
+The GPU path is: Mesa (Turnip with a KGSL backend) → Zink (OpenGL on Vulkan) → Termux:X11. The container setups use a patched Mesa build; the native setup uses Termux's own `mesa` and `mesa-vulkan-icd-freedreno` packages.
 
 ## Requirements
 
@@ -20,13 +23,13 @@ curl -fsSL https://raw.githubusercontent.com/bunnyxzyq-debug/termux-ubuntu-gpu-d
 bash install.sh
 ```
 
-It asks for a distro (Ubuntu or Debian), then a desktop, and runs the matching script (`install-ubuntu.sh` or `install-debian.sh`).
+It asks which setup you want, then runs the matching script (`install-ubuntu.sh`, `install-debian.sh` or `install-native.sh`). The container scripts also ask for a desktop.
 
 Non-interactive:
 
 ```bash
 DISTRO=debian DESKTOPS=kde YES=1 bash install.sh
-# DISTRO   = ubuntu | debian
+# DISTRO   = ubuntu | debian | native   (native always installs KDE Plasma)
 # DESKTOPS = kde | xfce | lxqt | mate | all (space or comma separated)
 ```
 
@@ -50,6 +53,13 @@ glxinfo -B | grep -i renderer     # expect: zink Vulkan ... (Turnip Adreno ...)
 
 Login inside the distro is user `droid` (sudo, no password).
 
+Native Termux:
+
+```bash
+start-native-kde          # KDE Plasma, GPU (Zink on Turnip)
+start-native-kde nogpu    # software rendering fallback
+```
+
 ## Notes
 
 - **Do not run `apt upgrade` on the held Mesa packages.** The script holds them so an upgrade can't replace the patched driver.
@@ -61,9 +71,16 @@ Login inside the distro is user `droid` (sudo, no password).
 - `top` and System Monitor show wrong CPU and sensor values under PRoot. Use the load average instead.
 - KDE needs an X11 session. Plasma 6.8 removed it, so KDE here relies on the distro keeping an older Plasma (Ubuntu 26.04 LTS: Plasma 6.6, Debian 13: Plasma 6.3).
 
+## Native Termux notes
+
+- It installs Plasma from Termux's `x11-repo` (`plasma-desktop`, `kwin-x11`) and holds those packages, because Plasma 6.8 removed the X11 session. Undo with `apt-mark unhold plasma-desktop plasma-workspace kwin-x11`.
+- Android 12 and newer can kill Termux during long installs. Disable the Phantom Process Killer first.
+- If the download is slow, run `termux-change-repo` and pick a nearby mirror before you start.
+- It changes your Termux install. The Ubuntu and Debian containers are separate and are left alone.
+
 ## How the Mesa download works
 
-The scripts download a prebuilt patched Mesa from [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container/releases) that matches the container's distro and codename. Nothing is redistributed here. To use a different release:
+The container scripts download a prebuilt patched Mesa from [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container/releases) that matches the container's distro and codename. Nothing is redistributed here. To use a different release:
 
 ```bash
 MESA_TAG=mesa-26.2.0-devel-20260709 bash install.sh
@@ -73,7 +90,16 @@ If no build exists for your release, the install finishes without GPU accelerati
 
 ## Status
 
-Tested on a Redmi M2101K6P (Adreno 618, Android 12). Ubuntu 26.04 with KDE Plasma 6.6 and Debian 13 (trixie) with KDE Plasma 6.3 both run on X11 through Termux:X11. In GPU mode OpenGL renders through Zink on Turnip (Adreno 618). The `nogpu` option falls back to llvmpipe (CPU). Other devices may differ, and reports are welcome as issues.
+Tested on a Redmi M2101K6P (Adreno 618, Android 12). Ubuntu 26.04 with KDE Plasma 6.6, Debian 13 (trixie) with KDE Plasma 6.3 and native Termux with KDE Plasma 6.7 all run on X11 through Termux:X11. In GPU mode OpenGL renders through Zink on Turnip (Adreno 618). The `nogpu` option falls back to llvmpipe (CPU). Other devices may differ, and reports are welcome as issues.
+
+## Experimental
+
+- `experimental/install-fedora.sh`: Fedora 44 with KDE Plasma (X11), XFCE, LXQt or MATE.
+
+Known issues:
+- `sudo` does not work inside PRoot on Fedora. Use `s <command>` (always with `-y`), for example `s dnf install -y vim`.
+- A black rectangle can appear on the KDE desktop. It is cosmetic and the cause is unknown.
+- KDE relies on the unsupported `plasma-workspace-x11` package.
 
 ## Credits
 
