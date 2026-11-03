@@ -1,9 +1,10 @@
 # Ubuntu / Debian + GPU-accelerated desktop on Android (no root)
 
-One installer with three ways to get a Linux desktop on Android with real Adreno GPU acceleration, shown with Termux:X11:
+One installer with four ways to get a Linux desktop on Android with real Adreno GPU acceleration, shown with Termux:X11 or the Anland app:
 
 - **Ubuntu 26.04** or **Debian 13** in a container (PRoot), with KDE Plasma, XFCE, LXQt or MATE.
 - **Native Termux:** KDE Plasma 6.7 running directly in Termux, with no container.
+- **Anland:** KDE Plasma on **Wayland** in a ready-made Debian 13 or Ubuntu 26.04 container, using [Anland](https://github.com/lfdevs/anland-termux) and its Android app. The desktop is drawn by the Anland app, not Termux:X11.
 
 The GPU path is: Mesa (Turnip with a KGSL backend) → Zink (OpenGL on Vulkan) → Termux:X11. The container setups use a patched Mesa build; the native setup uses Termux's own `mesa` and `mesa-vulkan-icd-freedreno` packages.
 
@@ -23,13 +24,14 @@ curl -fsSL https://raw.githubusercontent.com/bunnyxzyq-debug/termux-ubuntu-gpu-d
 bash install.sh
 ```
 
-It asks which setup you want, then runs the matching script (`install-ubuntu.sh`, `install-debian.sh` or `install-native.sh`). The container scripts also ask for a desktop.
+It asks which setup you want, then runs the matching script (`install-ubuntu.sh`, `install-debian.sh`, `install-native.sh` or `install-anland.sh`). The container scripts also ask for a desktop.
 
 Non-interactive:
 
 ```bash
 DISTRO=debian DESKTOPS=kde YES=1 bash install.sh
-# DISTRO   = ubuntu | debian | native   (native always installs KDE Plasma)
+# DISTRO   = ubuntu | debian | native | anland   (native and anland always install KDE Plasma)
+# IMAGE    = debian | ubuntu   (only for anland)
 # DESKTOPS = kde | xfce | lxqt | mate | all (space or comma separated)
 ```
 
@@ -60,6 +62,12 @@ start-native-kde          # KDE Plasma, GPU (Zink on Turnip)
 start-native-kde nogpu    # software rendering fallback
 ```
 
+Anland (Wayland):
+
+```bash
+start-anland-kde          # starts the Anland daemon and the KDE desktop; then open the Anland Termux app
+```
+
 ## Notes
 
 - **Do not run `apt upgrade` on the held Mesa packages.** The script holds them so an upgrade can't replace the patched driver.
@@ -78,6 +86,13 @@ start-native-kde nogpu    # software rendering fallback
 - If the download is slow, run `termux-change-repo` and pick a nearby mirror before you start.
 - It changes your Termux install. The Ubuntu and Debian containers are separate and are left alone.
 
+## Anland notes
+
+- Install the **Anland Termux** app once. The installer downloads the APK and tells you where it is. GitHub Termux needs the standard APK and F-Droid Termux needs the "compatible" one; the installer picks the right one.
+- The Debian and Ubuntu images come from the Anland project and hold their patched Mesa and KWin. **Do not run `apt upgrade` inside them.**
+- Touch input is direct. For a trackpad-style cursor use Termux:X11 or an external mouse.
+- Only the Debian 13 image has been booted to a desktop on the test phone so far.
+
 ## How the Mesa download works
 
 The container scripts download a prebuilt patched Mesa from [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container/releases) that matches the container's distro and codename. Nothing is redistributed here. To use a different release:
@@ -90,7 +105,7 @@ If no build exists for your release, the install finishes without GPU accelerati
 
 ## Status
 
-Tested on a Redmi M2101K6P (Adreno 618, Android 12). Ubuntu 26.04 with KDE Plasma 6.6, Debian 13 (trixie) with KDE Plasma 6.3 and native Termux with KDE Plasma 6.7 all run on X11 through Termux:X11. In GPU mode OpenGL renders through Zink on Turnip (Adreno 618). The `nogpu` option falls back to llvmpipe (CPU). Other devices may differ, and reports are welcome as issues.
+Tested on a Redmi M2101K6P (Adreno 618, Android 12). Ubuntu 26.04 with KDE Plasma 6.6, Debian 13 (trixie) with KDE Plasma 6.3 and native Termux with KDE Plasma 6.7 all run on X11 through Termux:X11. Anland with the Debian 13 image booted KDE Plasma on Wayland, drawing on the GPU (Freedreno). In GPU mode OpenGL renders through Zink on Turnip (Adreno 618). The `nogpu` option falls back to llvmpipe (CPU). Other devices may differ, and reports are welcome as issues.
 
 ## Experimental
 
@@ -105,5 +120,6 @@ Known issues:
 
 - Built with help from [Claude](https://claude.ai) (Anthropic)
 - [lfdevs/mesa-for-android-container](https://github.com/lfdevs/mesa-for-android-container): patched Mesa with the KGSL backend
+- [lfdevs/anland-termux](https://github.com/lfdevs/anland-termux) and [Anland](https://github.com/superturtlee/anland): Wayland display for Android and the ready-made images
 - [Termux](https://github.com/termux/termux-app), [Termux:X11](https://github.com/termux/termux-x11) and [proot-distro](https://github.com/termux/proot-distro)
 - [Mesa](https://www.mesa3d.org/) (Turnip, Zink)
