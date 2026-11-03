@@ -28,8 +28,8 @@ ask() {
 [ -d /data/data/com.termux ] || die "Run this inside Termux."
 command -v curl >/dev/null 2>&1 || die "curl is missing. Run: apt update && apt full-upgrade -y"
 
-IDS=("ubuntu" "debian" "native")
-NAMES=("Ubuntu 26.04 (container)" "Debian 13 (container)" "Native Termux: KDE Plasma, no container")
+IDS=("ubuntu" "debian" "native" "anland")
+NAMES=("Ubuntu 26.04 (container)" "Debian 13 (container)"  "Native Termux: KDE Plasma, no container" "Anland: Wayland KDE Plasma (container)")
 
 CHOICE=""
 if [ -n "${DISTRO:-}" ]; then
@@ -42,7 +42,7 @@ else
   echo "Which setup do you want?"
   for i in "${!NAMES[@]}"; do echo "  $((i+1))) ${NAMES[$i]}"; done
   N="$(ask "Number [default: 1]: " "1")"
-  if [[ "$N" =~ ^[1-3]$ ]]; then CHOICE="${IDS[$((N-1))]}"; else die "Invalid choice."; fi
+    if [[ "$N" =~ ^[1-4]$ ]]; then CHOICE="${IDS[$((N-1))]}"; else die "Invalid choice."; fi
 fi
 
 TARGET="$HOME/install-$CHOICE.sh"
